@@ -42,7 +42,6 @@ export function JobsTable(props: {
             <TableCell width={260}>Progress</TableCell>
             <TableCell>Success</TableCell>
             <TableCell>Failed</TableCell>
-            <TableCell align="right">Details</TableCell>
           </TableRow>
         </TableHead>
 
@@ -68,14 +67,6 @@ export function JobsTable(props: {
                   </TableCell>
                   <TableCell>{j.successCount}</TableCell>
                   <TableCell>{j.failedCount}</TableCell>
-                  <TableCell align="right">
-                    <Button
-                      size="small"
-                      onClick={() => setOpen(prev => ({ ...prev, [j._id]: !prev[j._id] }))}
-                    >
-                      {isOpen ? "Hide" : "Show"}
-                    </Button>
-                  </TableCell>
                 </TableRow>
 
                 <TableRow>

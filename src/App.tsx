@@ -20,7 +20,7 @@ export default function App() {
             <div className="card__header">
               <div>
                 <Typography variant="h4" gutterBottom className="title">
-                  Real Time CVS
+                  Real Time CSV
                 </Typography>
                 <Typography variant="body2" className="subtitle">
                   Upload a CSV and watch progress update live as it processes.
