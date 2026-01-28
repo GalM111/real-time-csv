@@ -1,73 +1,51 @@
-# React + TypeScript + Vite
+# Real Time CVS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+Real Time CVS is a React + Vite front-end for monitoring CSV ingestion jobs exposed by a backend queue. Users can upload CSV files, trigger server-side processing, and manually refresh job status (or enable short polling) to track success/failure metrics in near real time.
 
-Currently, two official plugins are available:
+## Features
+- Material UI dashboard highlighting total rows processed, success/failure counts, and job metadata.
+- CSV upload form with optimistic toast feedback and graceful error handling.
+- Jobs table with progress bars, expandable error details, and manual refresh controls.
+- Optional auto-refresh by passing `{ pollMs }` to the `useJobs` hook for live updates without manual clicks.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- React 19 + TypeScript, bootstrapped with Vite 7.
+- Material UI 7 for layout, theming, and icons.
+- Fetch-based API client targeting `/api/jobs` endpoints defined by your backend.
 
-## React Compiler
+## Getting Started
+1. Install dependencies: `npm install`
+2. Configure the API base URL in `.env`:
+   ```
+   VITE_API_BASE_URL=http://localhost:4000
+   ```
+3. Run the app locally: `npm run dev`
+4. Build for production: `npm run build`
+5. Preview the production bundle: `npm run preview`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Expected API Contract
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/jobs` | GET | Returns an array of job records sorted by `createdAt`.
+| `/api/jobs/:id` | GET | Returns a single job with detailed stats.
+| `/api/jobs/upload` | POST | Accepts multipart form data (field name `file`) and schedules processing. Returns `{ jobId }`.
+| `/api/jobs/:id/error-report` | GET | (Optional) Streams a downloadable error report blob.
 
-## Expanding the ESLint configuration
+Each job record should match `src/types/job.ts` and include progress counts plus an optional `errors` array. The frontend sorts jobs newest-first and determines “live” badges when any job status is `pending` or `processing`.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Customization Tips
+- Adjust poll frequency by editing `useJobs({ pollMs })` in `src/App.tsx` (disabled by default to avoid unnecessary backend load).
+- Tailor Material UI theming or card layout via `src/App.css` and `src/components`.
+- Extend `JobErrors` to show richer row-level context or link to downloadable reports.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Folder Highlights
+- `src/components/UploadForm.tsx`: handles client-side CSV selection and POST upload flow.
+- `src/components/JobsTable.tsx`: renders progress bars, metrics, and expandable error stacks.
+- `src/hooks/useJobs.ts`: encapsulates fetch, error, and polling logic.
+- `src/api/*.ts`: thin wrappers around the backend REST contract.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Future Enhancements
+- Add websocket-based push updates instead of polling.
+- Stream CSV validation feedback in real time while processing.
+- Provide per-row error CSV export directly in the table.
