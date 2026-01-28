@@ -7,7 +7,7 @@ export function JobErrors({ errors }: { errors?: string[] }) {
       {errors.slice(0, 10).map((e, idx) => (
         <Alert key={idx} severity="error">{e}</Alert>
       ))}
-      {errors.length > 10 && <Alert severity="info">Showing first 10 errors…</Alert>}
+      {errors.length > 10 && <Alert severity="info">Showing first 10 errors...</Alert>}
     </Stack>
   );
 }

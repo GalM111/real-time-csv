@@ -2,7 +2,6 @@ import {
   Box, Button, Chip, Collapse, LinearProgress, Paper, Stack,
   Table, TableBody, TableCell, TableHead, TableRow, Typography
 } from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import type { Job } from "../types/job";
 import { useState } from "react";
 import { JobErrors } from "./JobErrors";
@@ -19,7 +18,6 @@ function statusColor(status: Job["status"]) {
 export function JobsTable(props: {
   jobs: Job[];
   loading: boolean;
-  onRefresh: () => void;
 }) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
 
@@ -27,9 +25,11 @@ export function JobsTable(props: {
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
         <Typography variant="h6">Jobs</Typography>
-        <Button startIcon={<RefreshIcon />} onClick={props.onRefresh} disabled={props.loading}>
-          Refresh
-        </Button>
+        <Chip
+          size="small"
+          color={props.loading ? "default" : "success"}
+          label={props.loading ? "Syncing..." : "Live"}
+        />
       </Stack>
 
       {props.loading && <LinearProgress sx={{ mb: 2 }} />}
