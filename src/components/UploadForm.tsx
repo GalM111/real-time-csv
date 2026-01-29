@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { uploadCsv } from "../api/jobs";
@@ -7,6 +7,7 @@ export function UploadForm(props: { onUploaded: (jobId: string) => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   async function onUpload() {
     if (!file) return;
@@ -16,6 +17,9 @@ export function UploadForm(props: { onUploaded: (jobId: string) => void }) {
       const { jobId } = await uploadCsv(file);
       props.onUploaded(jobId);
       setFile(null);
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Upload failed");
     } finally {
@@ -31,6 +35,7 @@ export function UploadForm(props: { onUploaded: (jobId: string) => void }) {
         <Button variant="outlined" component="label" startIcon={<UploadFileIcon />}>
           Choose File
           <input
+            ref={inputRef}
             hidden
             type="file"
             accept=".csv,text/csv"
