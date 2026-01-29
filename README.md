@@ -34,11 +34,6 @@ Real Time CSV is a React + Vite front-end for monitoring CSV ingestion jobs expo
 
 Each job record should match `src/types/job.ts` and include progress counts plus an optional `errors` array. The frontend sorts jobs newest-first and maintains "Live" badges when any job status is `pending` or `processing`.
 
-## Customization Tips
-- Tailor Material UI theming or card layout via `src/App.css` and `src/components`.
-- Extend `JobErrors` to show richer row-level context or pair the inline list with the downloadable CSV asset.
-- Update `useJobs.ts` if you want to switch from SSE to web sockets or fall back to polling.
-
 ## Folder Highlights
 - `src/components/UploadForm.tsx`: handles client-side CSV selection and POST upload flow.
 - `src/components/JobsTable.tsx`: renders progress bars, metrics, and expandable error stacks.
